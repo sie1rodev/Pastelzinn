@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedido de Pastéis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="card">
+    <h2>Monte seu Pedido</h2>
+    <form id="formCliente">
+      <label for="nomeCliente">Seu nome:</label>
+      <input type="text" id="nomeCliente" placeholder="Digite seu nome" required>
+    </form>
+
+    <div class="sabores-lista" id="saboresLista">
+      <!-- Cards serão carregados via JS -->
+    </div>
+
+    <button id="confirmarPedido">Confirmar Pedido</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

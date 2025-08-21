@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Sabores</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="card">
+    <h2>Gerenciar Sabores</h2>
+    <form id="formSabor">
+  <input type="text" id="novoSabor" placeholder="Nome do sabor" required>
+  <input type="text" id="urlImagem" placeholder="URL da imagem" required>
+  <input type="number" id="qtdSabor" placeholder="Qtd. disponível" min="0" required>
+  <button type="submit">Adicionar Sabor</button>
+    </form>
+  <ul id="listaSabores"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
