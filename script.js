@@ -1,15 +1,3 @@
-// ====== SABORES (Mock via localStorage) ======
-if (!localStorage.getItem("sabores")) {
-  const iniciais = [
-    { nome: "Carne", img: "https://picsum.photos/100?1", qtd: 10 },
-    { nome: "Carne com Queijo", img: "https://picsum.photos/100?2", qtd: 10 },
-    { nome: "Frango com Catupiry", img: "https://picsum.photos/100?3", qtd: 10 },
-    { nome: "Queijo", img: "https://picsum.photos/100?4", qtd: 10 },
-    { nome: "Pizza", img: "https://picsum.photos/100?5", qtd: 10 }
-  ];
-  localStorage.setItem("sabores", JSON.stringify(iniciais));
-}
-
 function getSabores() {
   return JSON.parse(localStorage.getItem("sabores")) || [];
 }
