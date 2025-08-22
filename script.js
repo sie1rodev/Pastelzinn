@@ -38,7 +38,7 @@ if (document.getElementById("saboresLista")) {
 
   async function renderSaboresCliente() {
     lista.innerHTML = "";
-    const sabores = (await getSabores()).filter(s => (s.qtd ?? 0) > 0);
+    const sabores = (await getSabores()).filter(s => (s.quantidade ?? 0) > 0);
     sabores.forEach((sabor, i) => {
       const card = document.createElement("div");
       card.className = "sabor-card";
@@ -48,29 +48,29 @@ if (document.getElementById("saboresLista")) {
           <h3>${sabor.nome}</h3>
           <div class="controles">
             <button class="menos">-</button>
-            <span id="qtd-${i}">0</span>
+            <span id="quantidade-${i}">0</span>
             <button class="mais">+</button>
           </div>
-          <div class="estoque">Disponível: <span id="estoque-${i}">${sabor.qtd ?? 0}</span></div>
+          <div class="estoque">Disponível: <span id="estoque-${i}">${sabor.quantidade ?? 0}</span></div>
         </div>
       `;
       lista.appendChild(card);
 
-      let qtd = 0;
+      let quantidade = 0;
       function updateQtd() {
-        document.getElementById(`qtd-${i}`).innerText = qtd;
-        if (qtd > 0) pedidoAtual[sabor.nome] = qtd;
+        document.getElementById(`quantidade-${i}`).innerText = quantidade;
+        if (quantidade > 0) pedidoAtual[sabor.nome] = quantidade;
         else delete pedidoAtual[sabor.nome];
       }
       card.querySelector(".mais").addEventListener("click", () => {
-        if ((sabor.qtd ?? 0) > qtd) {
-          qtd++;
+        if ((sabor.quantidade ?? 0) > quantidade) {
+          quantidade++;
           updateQtd();
         }
       });
       card.querySelector(".menos").addEventListener("click", () => {
-        if (qtd > 0) {
-          qtd--;
+        if (quantidade > 0) {
+          quantidade--;
           updateQtd();
         }
       });
@@ -86,15 +86,15 @@ if (document.getElementById("saboresLista")) {
 
     const saboresAtual = await getSabores();
     // Monta o array de sabores para o pedido
-    const saboresPedido = Object.entries(pedidoAtual).map(([nomeSabor, qtdPedida]) => {
+    const saboresPedido = Object.entries(pedidoAtual).map(([nomeSabor, quantidadePedida]) => {
       const saborObj = saboresAtual.find(s => s.nome === nomeSabor);
-      return saborObj ? { saborId: saborObj.id, quantidade: qtdPedida } : null;
+      return saborObj ? { saborId: saborObj.id, quantidade: quantidadePedida } : null;
     }).filter(Boolean);
 
     // Verifica estoque antes de confirmar
     for (const item of saboresPedido) {
       const saborObj = saboresAtual.find(s => s.id === item.saborId);
-      if (!saborObj || (saborObj.qtd ?? 0) < item.quantidade) {
+      if (!saborObj || (saborObj.quantidade ?? 0) < item.quantidade) {
         return;
       }
     }
@@ -146,8 +146,8 @@ if (document.getElementById("listaPedidos")) {
           }).join("") + '</ul>';
       } else if (pedido.itens && typeof pedido.itens === "object") {
         itensHtml = '<ul style="margin:8px 0 0 0;padding-left:18px;">' +
-          Object.entries(pedido.itens).map(([sabor, qtd]) => {
-            return `<li>${sabor}: ${qtd}</li>`;
+          Object.entries(pedido.itens).map(([sabor, quantidade]) => {
+            return `<li>${sabor}: ${quantidade}</li>`;
           }).join("") + '</ul>';
       }
       li.innerHTML = `
@@ -185,7 +185,7 @@ if (document.getElementById("listaSabores")) {
     sabores.forEach((sabor) => {
       const li = document.createElement("li");
       li.innerHTML = `
-        <span>${sabor.nome} (Qtd: <input type='number' min='0' value='${sabor.quantidade ?? 0}' data-editqtd='${sabor.id}' style='width:50px'>)</span>
+        <span>${sabor.nome} (Qtd: <input type='number' min='0' value='${sabor.quantidade ?? 0}' data-editquantidade='${sabor.id}' style='width:50px'>)</span>
         <button data-i="${sabor.id}">Remover</button>
       `;
       li.querySelector("button").addEventListener("click", async () => {
@@ -210,7 +210,7 @@ if (document.getElementById("listaSabores")) {
     e.preventDefault();
     const nome = document.getElementById("novoSabor").value;
     const img = document.getElementById("urlImagem").value;
-    const quantidade = parseInt(document.getElementById("qtdSabor").value) || 0;
+    const quantidade = parseInt(document.getElementById("quantidadeSabor").value) || 0;
     await salvarSabor({ nome, img, quantidade });
     renderSaboresAdmin();
     form.reset();
