@@ -154,11 +154,10 @@ button.btn-danger-full {
     padding: 15px 20px; /* um pouco mais de espaçamento interno */
     border-radius: 12px;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column; /* coluna para centralizar verticalmente */
     align-items: center;
     justify-content: center; /* centraliza horizontalmente */
-    text-align: center;      /* centraliza textos e spans */
-    gap: 12px;               /* espaçamento entre elementos */
+    text-align: center;      /* centraliza textos e spans */               /* espaçamento entre elementos */
 }
 
 
