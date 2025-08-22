@@ -7,17 +7,18 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <nav>
+    <a href="index.html">Fazer Pedido</a>
+    <a href="admin.html">Comandas</a>
+    <a href="sabores.html">Sabores</a>
+  </nav>
+
   <div class="card">
     <h2>Monte seu Pedido</h2>
-    <form id="formCliente">
-      <label for="nomeCliente">Seu nome:</label>
-      <input type="text" id="nomeCliente" placeholder="Digite seu nome" required>
-    </form>
+    <label for="nomeCliente">Seu nome:</label>
+    <input type="text" id="nomeCliente" placeholder="Digite seu nome">
 
-    <div class="sabores-lista" id="saboresLista">
-      <!-- Cards serão carregados via JS -->
-    </div>
-
+    <div class="sabores-lista" id="saboresLista"></div>
     <button id="confirmarPedido">Confirmar Pedido</button>
   </div>
 

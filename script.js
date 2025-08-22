@@ -1,221 +1,158 @@
+const API_URL = "https://api-pastelzinn.vercel.app";
 
-// ====== API REST ======
-async function getSabores() {
-  const res = await fetch('https://api-pastelzinn.vercel.app/sabores');
-  return await res.json();
-}
-async function salvarSabor(sabor) {
-  await fetch('https://api-pastelzinn.vercel.app/sabores', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(sabor)
-  });
-}
-async function removerSabor(id) {
-  await fetch(`https://api-pastelzinn.vercel.app/sabores/${id}`, { method: 'DELETE' });
-}
-async function getPedidos() {
-  const res = await fetch('https://api-pastelzinn.vercel.app/pedidos');
-  return await res.json();
-}
-async function salvarPedido(pedido) {
-  await fetch('https://api-pastelzinn.vercel.app/pedidos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(pedido)
-  });
-}
-async function zerarPedidos() {
-  await fetch('https://api-pastelzinn.vercel.app/pedidos', { method: 'DELETE' });
-}
+// ---------- Inicialização ----------
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("saboresLista")) {
+    carregarSaboresCliente();
+    document.getElementById("confirmarPedido").addEventListener("click", enviarPedido);
+  }
 
+  if (document.getElementById("listaPedidos")) {
+    carregarPedidos();
+    document.getElementById("zerarComandas").addEventListener("click", zerarComandas);
+  }
 
-// ====== TELA CLIENTE (API) ======
-if (document.getElementById("saboresLista")) {
+  if (document.getElementById("listaSabores")) {
+    carregarSaboresAdmin();
+    document.getElementById("formSabor").addEventListener("submit", adicionarSabor);
+  }
+});
+
+// ---------- CLIENTE ----------
+async function carregarSaboresCliente() {
+  const res = await fetch(`${API_URL}/sabores`);
+  const sabores = await res.json();
   const lista = document.getElementById("saboresLista");
-  const confirmar = document.getElementById("confirmarPedido");
-  let pedidoAtual = {};
+  lista.innerHTML = "";
 
-  async function renderSaboresCliente() {
-    lista.innerHTML = "";
-    const sabores = (await getSabores()).filter(s => (s.quantidade ?? 0) > 0);
-    sabores.forEach((sabor, i) => {
-      const card = document.createElement("div");
-      card.className = "sabor-card";
-      card.innerHTML = `
-  <img src="${sabor.img}" alt="${sabor.nome}" style="width: 110px; height: 110px; object-fit: cover; border-radius: 20px; border: 3px solid #00adb5; background: #fff; box-shadow: 0 4px 18px rgba(0,173,181,0.10);">
-        <div class="sabor-info">
-          <h3>${sabor.nome}</h3>
-          <div class="controles">
-            <button class="menos">-</button>
-            <span id="quantidade-${i}">0</span>
-            <button class="mais">+</button>
-          </div>
-          <div class="estoque">Disponível: <span id="estoque-${i}">${sabor.quantidade ?? 0}</span></div>
-        </div>
-      `;
-      lista.appendChild(card);
-
-      let quantidade = 0;
-      function updateQtd() {
-        document.getElementById(`quantidade-${i}`).innerText = quantidade;
-        if (quantidade > 0) pedidoAtual[sabor.nome] = quantidade;
-        else delete pedidoAtual[sabor.nome];
-      }
-      card.querySelector(".mais").addEventListener("click", () => {
-        if ((sabor.quantidade ?? 0) > quantidade) {
-          quantidade++;
-          updateQtd();
-        }
-      });
-      card.querySelector(".menos").addEventListener("click", () => {
-        if (quantidade > 0) {
-          quantidade--;
-          updateQtd();
-        }
-      });
-    });
-  }
-
-  renderSaboresCliente();
-
-  confirmar.addEventListener("click", async () => {
-    const nome = document.getElementById("nomeCliente").value.trim();
-    if (!nome) { return; }
-    if (Object.keys(pedidoAtual).length === 0) { return; }
-
-    const saboresAtual = await getSabores();
-    // Monta o array de sabores para o pedido
-    const saboresPedido = Object.entries(pedidoAtual).map(([nomeSabor, quantidadePedida]) => {
-      const saborObj = saboresAtual.find(s => s.nome === nomeSabor);
-      return saborObj ? { saborId: saborObj.id, quantidade: quantidadePedida } : null;
-    }).filter(Boolean);
-
-    // Verifica estoque antes de confirmar
-    for (const item of saboresPedido) {
-      const saborObj = saboresAtual.find(s => s.id === item.saborId);
-      if (!saborObj || (saborObj.quantidade ?? 0) < item.quantidade) {
-        return;
-      }
-    }
-
-    // Envia o pedido para o back-end (estoque será descontado lá)
-    await salvarPedido({ nome, sabores: saboresPedido });
-    window.location.reload();
+  sabores.forEach(sabor => {
+    const preco = sabor.preco ?? 12.00; // fallback caso não tenha preço
+    const div = document.createElement("div");
+    div.className = "sabor-card";
+    div.innerHTML = `
+      <span>${sabor.nome} (Estoque: ${sabor.quantidade || 0}) - R$ ${preco.toFixed(2)}</span>
+      <input type="number" min="0" value="0" id="qtd-${sabor._id}" style="width:60px;">
+    `;
+    lista.appendChild(div);
   });
 }
 
-// ====== TELA ADMIN (API) ======
-if (document.getElementById("listaPedidos")) {
-  const btnZerar = document.getElementById("zerarComandas");
-  const listaPedidos = document.getElementById("listaPedidos");
+async function enviarPedido() {
+  const nomeCliente = document.getElementById("nomeCliente").value.trim();
+  if (!nomeCliente) { alert("Digite seu nome!"); return; }
 
-  // Funções API
-  async function getPedidos() {
-    const res = await fetch('https://api-pastelzinn.vercel.app/pedidos');
-    return await res.json();
-  }
-  async function getSaboresAPI() {
-    const res = await fetch('https://api-pastelzinn.vercel.app/sabores');
-    return await res.json();
-  }
-  async function zerarPedidos() {
-    await fetch('https://api-pastelzinn.vercel.app/pedidos', { method: 'DELETE' });
-  }
+  const resSabores = await fetch(`${API_URL}/sabores`);
+  const sabores = await resSabores.json();
 
-  async function renderPedidos() {
-    listaPedidos.innerHTML = "";
-    const [pedidos, sabores] = await Promise.all([getPedidos(), getSaboresAPI()]);
-    if (!pedidos.length) {
-      const li = document.createElement("li");
-      li.textContent = "Nenhum pedido encontrado.";
-      listaPedidos.appendChild(li);
-      return;
-    }
-    pedidos.forEach((pedido) => {
-      const li = document.createElement("li");
-      li.className = "pedido";
-      let itensHtml = "";
-      // Suporte ao novo formato de pedido (array de sabores)
-      if (Array.isArray(pedido.sabores)) {
-        itensHtml = '<ul style="margin:8px 0 0 0;padding-left:18px;">' +
-          pedido.sabores.map(item => {
-            // Buscar nome do sabor pelo id
-            const sabor = (Array.isArray(sabores) ? sabores : []).find(s => (s._id?.toString() === item.saborId) || (s.id === item.saborId));
-            return `<li>${sabor ? sabor.nome : item.saborId}: ${item.quantidade}</li>`;
-          }).join("") + '</ul>';
-      } else if (pedido.itens && typeof pedido.itens === "object") {
-        itensHtml = '<ul style="margin:8px 0 0 0;padding-left:18px;">' +
-          Object.entries(pedido.itens).map(([sabor, quantidade]) => {
-            return `<li>${sabor}: ${quantidade}</li>`;
-          }).join("") + '</ul>';
-      }
-      li.innerHTML = `
-        <strong style="font-size:1.18rem;color:#007b83;letter-spacing:0.5px;">${pedido.nome || "(Sem nome)"}</strong><br>
-        <div style="margin:6px 0 0 0;font-size:1.05rem;color:#222831;font-weight:500;">${itensHtml}</div>
-        <br>
-        <button class="ok">Concluído</button>
-      `;
-      li.querySelector(".ok").addEventListener("click", () => {
-        li.style.background = "#d4edda";
-      });
-      listaPedidos.appendChild(li);
-    });
+  const pedido = sabores.map(s => {
+    const qtd = parseInt(document.getElementById(`qtd-${s._id}`).value);
+    return qtd > 0 ? { saborId: s._id, quantidade: qtd, preco: s.preco ?? 12.00 } : null;
+  }).filter(Boolean);
 
-  if (btnZerar) {
-    btnZerar.addEventListener("click", async () => {
-      if (confirm("Tem certeza que deseja zerar todas as comandas?")) {
-        await zerarPedidos();
-        renderPedidos();
-      }
-    });
-  }
+  if (pedido.length === 0) { alert("Selecione pelo menos um sabor!"); return; }
 
-  renderPedidos();
-}
+  const total = pedido.reduce((sum, item) => sum + item.quantidade * item.preco, 0);
 
-// ====== TELA SABORES (API) ======
-if (document.getElementById("listaSabores")) {
-  const form = document.getElementById("formSabor");
-  const listaSabores = document.getElementById("listaSabores");
-
-  async function renderSaboresAdmin() {
-    listaSabores.innerHTML = "";
-    const sabores = await getSabores();
-    sabores.forEach((sabor) => {
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <span>${sabor.nome} (Qtd: <input type='number' min='0' value='${sabor.quantidade ?? 0}' data-editquantidade='${sabor.id}' style='width:50px'>)</span>
-        <button data-i="${sabor.id}">Remover</button>
-      `;
-      li.querySelector("button").addEventListener("click", async () => {
-        await removerSabor(sabor.id);
-        renderSaboresAdmin();
-      });
-      // Editar quantidade direto na lista
-      li.querySelector("input[type='number']").addEventListener("change", async (e) => {
-        const novoQtd = parseInt(e.target.value) || 0;
-        const saborEditado = { ...sabor, quantidade: novoQtd };
-        await fetch(`https://api-pastelzinn.vercel.app/sabores/${sabor.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(saborEditado)
-        });
-      });
-      listaSabores.appendChild(li);
-    });
-  }
-
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-    const nome = document.getElementById("novoSabor").value;
-    const img = document.getElementById("urlImagem").value;
-    const quantidade = parseInt(document.getElementById("quantidadeSabor").value) || 0;
-    await salvarSabor({ nome, img, quantidade });
-    renderSaboresAdmin();
-    form.reset();
+  const res = await fetch(`${API_URL}/pedidos`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nomeCliente, pedido })
   });
 
-  renderSaboresAdmin();
+  const data = await res.json();
+  if (res.ok) { 
+    alert(`Pedido realizado! Total: R$ ${total.toFixed(2)}`);
+    carregarSaboresCliente(); 
+    document.getElementById("nomeCliente").value = "";
+  } else {
+    alert(data.error || "Erro ao enviar pedido.");
+  }
 }
+
+// ---------- ADMIN - COMANDAS ----------
+async function carregarPedidos() {
+  const resPedidos = await fetch(`${API_URL}/pedidos`);
+  const pedidos = await resPedidos.json();
+
+  const resSabores = await fetch(`${API_URL}/sabores`);
+  const sabores = await resSabores.json();
+
+  const lista = document.getElementById("listaPedidos");
+  lista.innerHTML = "";
+
+  pedidos.forEach(p => {
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${p.nomeCliente}</strong>`;
+    
+    const ul = document.createElement("ul");
+    p.pedido.forEach(item => {
+      const sabor = sabores.find(s => s._id === item.saborId);
+      const nomeSabor = sabor ? sabor.nome : "Sabor removido";
+      const precoSabor = sabor?.preco ?? item.preco ?? 12.00;
+      const liSabor = document.createElement("li");
+      liSabor.textContent = `${item.quantidade}x ${nomeSabor} - R$ ${(item.quantidade * precoSabor).toFixed(2)}`;
+      ul.appendChild(liSabor);
+    });
+
+    li.appendChild(ul);
+
+    const total = p.pedido.reduce((sum, item) => {
+      const sabor = sabores.find(s => s._id === item.saborId);
+      const precoSabor = sabor?.preco ?? item.preco ?? 12.00;
+      return sum + item.quantidade * precoSabor;
+    }, 0);
+    const totalP = document.createElement("p");
+    totalP.innerHTML = `<strong>Total: R$ ${total.toFixed(2)}</strong>`;
+    li.appendChild(totalP);
+
+    lista.appendChild(li);
+  });
+}
+
+async function zerarComandas() {
+  if (!confirm("Tem certeza que deseja zerar todas as comandas?")) return;
+  await fetch(`${API_URL}/pedidos`, { method: "DELETE" });
+  carregarPedidos();
+}
+
+// ---------- ADMIN - SABORES ----------
+async function carregarSaboresAdmin() {
+  const res = await fetch(`${API_URL}/sabores`);
+  const sabores = await res.json();
+  const lista = document.getElementById("listaSabores");
+  lista.innerHTML = "";
+
+  sabores.forEach(s => {
+    const preco = s.preco ?? 0;
+    const li = document.createElement("li");
+    li.innerHTML = `${s.nome} - Estoque: ${s.quantidade || 0} - R$ ${preco.toFixed(2)}
+      <button onclick="removerSabor('${s._id}')">Excluir</button>`;
+    lista.appendChild(li);
+  });
+}
+
+async function adicionarSabor(e) {
+  e.preventDefault();
+  const nome = document.getElementById("nomeSabor").value.trim();
+  const quantidade = parseInt(document.getElementById("quantidadeSabor").value);
+  const preco = parseFloat(document.getElementById("precoSabor").value);
+  if (!nome || isNaN(quantidade) || isNaN(preco)) return;
+
+  const res = await fetch(`${API_URL}/sabores`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nome, quantidade, preco })
+  });
+
+  const data = await res.json();
+  if (!res.ok) alert(data.error || "Erro ao adicionar sabor.");
+
+  document.getElementById("formSabor").reset();
+  carregarSaboresAdmin();
+}
+
+async function removerSabor(id) {
+  if (!confirm("Deseja remover este sabor?")) return;
+  await fetch(`${API_URL}/sabores/${id}`, { method: "DELETE" });
+  carregarSaboresAdmin();
 }
