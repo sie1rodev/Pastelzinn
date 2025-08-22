@@ -43,7 +43,7 @@ if (document.getElementById("saboresLista")) {
       const card = document.createElement("div");
       card.className = "sabor-card";
       card.innerHTML = `
-        <img src="${sabor.img}" alt="${sabor.nome}">
+  <img src="${sabor.img}" alt="${sabor.nome}" style="width: 110px; height: 110px; object-fit: cover; border-radius: 20px; border: 3px solid #00adb5; background: #fff; box-shadow: 0 4px 18px rgba(0,173,181,0.10);">
         <div class="sabor-info">
           <h3>${sabor.nome}</h3>
           <div class="controles">
@@ -124,7 +124,7 @@ if (document.getElementById("listaPedidos")) {
     return await res.json();
   }
   async function zerarPedidos() {
-    await fetch('http://localhost:3001/pedidos', { method: 'DELETE' });
+    await fetch('https://api-pastelzinn.vercel.app/pedidos', { method: 'DELETE' });
   }
 
   async function renderPedidos() {
