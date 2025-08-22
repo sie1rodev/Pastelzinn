@@ -84,27 +84,23 @@ if (document.getElementById("saboresLista")) {
     if (!nome) { return; }
     if (Object.keys(pedidoAtual).length === 0) { return; }
 
-    // Verificar estoque antes de confirmar
     const saboresAtual = await getSabores();
-    for (const [nomeSabor, qtdPedida] of Object.entries(pedidoAtual)) {
+    // Monta o array de sabores para o pedido
+    const saboresPedido = Object.entries(pedidoAtual).map(([nomeSabor, qtdPedida]) => {
       const saborObj = saboresAtual.find(s => s.nome === nomeSabor);
-      if (!saborObj || (saborObj.qtd ?? 0) < qtdPedida) {
+      return saborObj ? { saborId: saborObj.id, quantidade: qtdPedida } : null;
+    }).filter(Boolean);
+
+    // Verifica estoque antes de confirmar
+    for (const item of saboresPedido) {
+      const saborObj = saboresAtual.find(s => s.id === item.saborId);
+      if (!saborObj || (saborObj.qtd ?? 0) < item.quantidade) {
         return;
       }
     }
-    // Descontar estoque e atualizar na API
-    for (const [nomeSabor, qtdPedida] of Object.entries(pedidoAtual)) {
-      const saborObj = saboresAtual.find(s => s.nome === nomeSabor);
-      if (saborObj) {
-        saborObj.qtd = (saborObj.qtd ?? 0) - qtdPedida;
-        await fetch(`https://api-pastelzinn.vercel.app/sabores/${saborObj.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(saborObj)
-        });
-      }
-    }
-    await salvarPedido({ nome, itens: pedidoAtual });
+
+    // Envia o pedido para o back-end (estoque será descontado lá)
+    await salvarPedido({ nome, sabores: saboresPedido });
     window.location.reload();
   });
 }
