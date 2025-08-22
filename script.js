@@ -2,16 +2,19 @@ const API_URL = "https://api-pastelzinn.vercel.app";
 
 // ---------- Inicialização ----------
 document.addEventListener("DOMContentLoaded", () => {
+  // Cliente
   if (document.getElementById("saboresLista")) {
     carregarSaboresCliente();
     document.getElementById("confirmarPedido").addEventListener("click", enviarPedido);
   }
 
+  // Admin Comandas
   if (document.getElementById("listaPedidos")) {
     carregarPedidos();
     document.getElementById("zerarComandas").addEventListener("click", zerarComandas);
   }
 
+  // Admin Sabores
   if (document.getElementById("listaSabores")) {
     carregarSaboresAdmin();
     document.getElementById("formSabor").addEventListener("submit", adicionarSabor);
@@ -26,14 +29,29 @@ async function carregarSaboresCliente() {
   lista.innerHTML = "";
 
   sabores.forEach(sabor => {
-    const preco = sabor.preco ?? 12.00; // fallback caso não tenha preço
+    const preco = sabor.preco ?? 12.00;
     const div = document.createElement("div");
     div.className = "sabor-card";
     div.innerHTML = `
-      <span>${sabor.nome} (Estoque: ${sabor.quantidade || 0}) - R$ ${preco.toFixed(2)}</span>
-      <input type="number" min="0" value="0" id="qtd-${sabor._id}" style="width:60px;">
+      <span>${sabor.nome}</span>
+      <small>Estoque: ${sabor.quantidade || 0}</small>
+      <small>R$ ${preco.toFixed(2)}</small>
+      <div class="qtd-container">
+        <button class="menos">-</button>
+        <input type="number" min="0" value="0" id="qtd-${sabor._id}">
+        <button class="mais">+</button>
+      </div>
     `;
     lista.appendChild(div);
+
+    const input = div.querySelector("input");
+    div.querySelector(".mais").addEventListener("click", () => {
+      const max = sabor.quantidade || 99;
+      if (parseInt(input.value) < max) input.value = parseInt(input.value) + 1;
+    });
+    div.querySelector(".menos").addEventListener("click", () => {
+      if (parseInt(input.value) > 0) input.value = parseInt(input.value) - 1;
+    });
   });
 }
 
@@ -73,15 +91,24 @@ async function enviarPedido() {
 async function carregarPedidos() {
   const resPedidos = await fetch(`${API_URL}/pedidos`);
   const pedidos = await resPedidos.json();
-
   const resSabores = await fetch(`${API_URL}/sabores`);
   const sabores = await resSabores.json();
-
   const lista = document.getElementById("listaPedidos");
   lista.innerHTML = "";
 
   pedidos.forEach(p => {
     const li = document.createElement("li");
+
+    // Botão concluir
+    const btnConcluir = document.createElement("button");
+    btnConcluir.textContent = "Concluir comanda";
+    btnConcluir.className = "btn-danger btn-concluir";
+    btnConcluir.addEventListener("click", async () => {
+      if (!confirm("Deseja concluir esta comanda?")) return;
+      await fetch(`${API_URL}/pedidos/${p._id}`, { method: "DELETE" });
+      carregarPedidos();
+    });
+
     li.innerHTML = `<strong>${p.nomeCliente}</strong>`;
     
     const ul = document.createElement("ul");
@@ -90,7 +117,7 @@ async function carregarPedidos() {
       const nomeSabor = sabor ? sabor.nome : "Sabor removido";
       const precoSabor = sabor?.preco ?? item.preco ?? 12.00;
       const liSabor = document.createElement("li");
-      liSabor.textContent = `${item.quantidade}x ${nomeSabor} - R$ ${(item.quantidade * precoSabor).toFixed(2)}`;
+      liSabor.innerHTML = `<span class="sabor-quantidade">${item.quantidade}x</span> <span class="sabor-nome">${nomeSabor}</span> - R$ ${(item.quantidade * precoSabor).toFixed(2)}`;
       ul.appendChild(liSabor);
     });
 
@@ -102,8 +129,11 @@ async function carregarPedidos() {
       return sum + item.quantidade * precoSabor;
     }, 0);
     const totalP = document.createElement("p");
+    totalP.className = "total";
     totalP.innerHTML = `<strong>Total: R$ ${total.toFixed(2)}</strong>`;
     li.appendChild(totalP);
+
+    li.appendChild(btnConcluir);
 
     lista.appendChild(li);
   });
@@ -123,7 +153,7 @@ async function carregarSaboresAdmin() {
   lista.innerHTML = "";
 
   sabores.forEach(s => {
-    const preco = s.preco ?? 0;
+    const preco = s.preco ?? 12;
     const li = document.createElement("li");
     li.innerHTML = `${s.nome} - Estoque: ${s.quantidade || 0} - R$ ${preco.toFixed(2)}
       <button onclick="removerSabor('${s._id}')">Excluir</button>`;
