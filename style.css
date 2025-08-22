@@ -251,16 +251,24 @@ button.btn-danger-full {
  span {
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: #5A3E36;
+  margin: 3px;
+  text-align: center;
+  align-items: center;
 }
+  span.sabor-nome {
+    font-size: 18px;
+    font-weight: 600;
+  }
 
  small {
   font-weight: 400;
   font-size: 0.9rem;
   color: #A97C50; /* tom pastel mais suave */
   display: block;
-  margin-top: 4px;
+  text-align: center;
+  align-items: center;
 }
 
 .listaSabores {
@@ -274,15 +282,16 @@ button.btn-danger-full {
 }
 
 .listaSabores li {
-  padding: 10px 15px;
+  padding: 15px 20px;
   background-color: #ffffff;
   border-radius: 8px;
   display: grid;
-  justify-content: space-between;
-  align-items: center;
-  transition: background-color 0.2s;
+  place-items: center; /* centraliza horizontal e vertical */
+  gap: 8px; /* espaço entre elementos, se tiver mais de um */
+  transition: background-color 0.2s, transform 0.2s;
   cursor: default;
   text-align: center;
   font-size: 20px;
+  text-transform: uppercase;
 }
 

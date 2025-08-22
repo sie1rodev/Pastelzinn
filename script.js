@@ -117,7 +117,7 @@ async function carregarPedidos() {
       const nomeSabor = sabor ? sabor.nome : "Sabor removido";
       const precoSabor = sabor?.preco ?? item.preco ?? 12.00;
       const liSabor = document.createElement("li");
-      liSabor.innerHTML = `<span class="sabor-quantidade">${item.quantidade}x</span> <span class="sabor-nome">${nomeSabor}</span> - R$ ${(item.quantidade * precoSabor).toFixed(2)}`;
+      liSabor.innerHTML = `<span class="sabor-quantidade">${item.quantidade}x</span> <span class="sabor-nome">${nomeSabor}</span> <br/> <span>R$ ${(item.quantidade * precoSabor).toFixed(2)}</span>`;
       ul.appendChild(liSabor);
     });
 
@@ -155,7 +155,7 @@ async function carregarSaboresAdmin() {
   sabores.forEach(s => {
     const preco = s.preco ?? 12;
     const li = document.createElement("li");
-    li.innerHTML = `${s.nome} - Estoque: ${s.quantidade || 0} - R$ ${preco.toFixed(2)}
+    li.innerHTML = `${s.nome} <br/>  Estoque: ${s.quantidade || 0} <br/> R$ ${preco.toFixed(2)}
       <button class="btn-delete" onclick="removerSabor('${s._id}')">Excluir</button>`;
     lista.appendChild(li);
   });
