@@ -79,7 +79,9 @@ input, button {
   font-size: 1rem;
   margin: 8px 0;
   transition: all 0.2s;
+  width: 100%;
 }
+
 input#nomeCliente{
   width: 100%;
 }
@@ -261,3 +263,27 @@ button.btn-danger-full {
   display: block;
   margin-top: 4px;
 }
+
+.listaSabores {
+  list-style: none;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.listaSabores li {
+  padding: 10px 15px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  display: grid;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+  cursor: default;
+  text-align: center;
+  font-size: 20px;
+}
+

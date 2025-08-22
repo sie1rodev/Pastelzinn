@@ -156,7 +156,7 @@ async function carregarSaboresAdmin() {
     const preco = s.preco ?? 12;
     const li = document.createElement("li");
     li.innerHTML = `${s.nome} - Estoque: ${s.quantidade || 0} - R$ ${preco.toFixed(2)}
-      <button onclick="removerSabor('${s._id}')">Excluir</button>`;
+      <button class="btn-delete" onclick="removerSabor('${s._id}')">Excluir</button>`;
     lista.appendChild(li);
   });
 }
