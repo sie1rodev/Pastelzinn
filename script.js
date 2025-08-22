@@ -163,10 +163,25 @@ async function carregarSaboresAdmin() {
 
 async function adicionarSabor(e) {
   e.preventDefault();
-  const nome = document.getElementById("nomeSabor").value.trim();
-  const quantidade = parseInt(document.getElementById("quantidadeSabor").value);
-  const preco = parseFloat(document.getElementById("precoSabor").value);
-  if (!nome || isNaN(quantidade) || isNaN(preco)) return;
+
+  const nomeInput = document.getElementById("nomeSabor");
+  const quantidadeInput = document.getElementById("quantidadeSabor");
+
+  if (!nomeInput || !quantidadeInput) {
+    alert("Campos do formulário não encontrados!");
+    return;
+  }
+
+  const nome = nomeInput.value.trim();
+  const quantidade = parseInt(quantidadeInput.value);
+
+  if (!nome || isNaN(quantidade)) {
+    alert("Preencha todos os campos corretamente!");
+    return;
+  }
+
+
+  const preco = 12.00;
 
   const res = await fetch(`${API_URL}/sabores`, {
     method: "POST",
@@ -180,6 +195,7 @@ async function adicionarSabor(e) {
   document.getElementById("formSabor").reset();
   carregarSaboresAdmin();
 }
+
 
 async function removerSabor(id) {
   if (!confirm("Deseja remover este sabor?")) return;
