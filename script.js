@@ -136,7 +136,15 @@ if (document.getElementById("listaPedidos")) {
       const li = document.createElement("li");
       li.className = "pedido";
       let itensHtml = "";
-      if (pedido.itens && typeof pedido.itens === "object") {
+      // Suporte ao novo formato de pedido (array de sabores)
+      if (Array.isArray(pedido.sabores)) {
+        itensHtml = '<ul style="margin:8px 0 0 0;padding-left:18px;">' +
+          pedido.sabores.map(item => {
+            // Buscar nome do sabor pelo id
+            const sabor = (Array.isArray(sabores) ? sabores : []).find(s => (s._id?.toString() === item.saborId) || (s.id === item.saborId));
+            return `<li>${sabor ? sabor.nome : item.saborId}: ${item.quantidade}</li>`;
+          }).join("") + '</ul>';
+      } else if (pedido.itens && typeof pedido.itens === "object") {
         itensHtml = '<ul style="margin:8px 0 0 0;padding-left:18px;">' +
           Object.entries(pedido.itens).map(([sabor, qtd]) => {
             return `<li>${sabor}: ${qtd}</li>`;
@@ -153,7 +161,6 @@ if (document.getElementById("listaPedidos")) {
       });
       listaPedidos.appendChild(li);
     });
-  }
 
   if (btnZerar) {
     btnZerar.addEventListener("click", async () => {
@@ -178,7 +185,7 @@ if (document.getElementById("listaSabores")) {
     sabores.forEach((sabor) => {
       const li = document.createElement("li");
       li.innerHTML = `
-        <span>${sabor.nome} (Qtd: <input type='number' min='0' value='${sabor.qtd ?? 0}' data-editqtd='${sabor.id}' style='width:50px'>)</span>
+        <span>${sabor.nome} (Qtd: <input type='number' min='0' value='${sabor.quantidade ?? 0}' data-editqtd='${sabor.id}' style='width:50px'>)</span>
         <button data-i="${sabor.id}">Remover</button>
       `;
       li.querySelector("button").addEventListener("click", async () => {
@@ -188,7 +195,7 @@ if (document.getElementById("listaSabores")) {
       // Editar quantidade direto na lista
       li.querySelector("input[type='number']").addEventListener("change", async (e) => {
         const novoQtd = parseInt(e.target.value) || 0;
-        const saborEditado = { ...sabor, qtd: novoQtd };
+        const saborEditado = { ...sabor, quantidade: novoQtd };
         await fetch(`https://api-pastelzinn.vercel.app/sabores/${sabor.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -203,11 +210,12 @@ if (document.getElementById("listaSabores")) {
     e.preventDefault();
     const nome = document.getElementById("novoSabor").value;
     const img = document.getElementById("urlImagem").value;
-    const qtd = parseInt(document.getElementById("qtdSabor").value) || 0;
-    await salvarSabor({ nome, img, qtd });
+    const quantidade = parseInt(document.getElementById("qtdSabor").value) || 0;
+    await salvarSabor({ nome, img, quantidade });
     renderSaboresAdmin();
     form.reset();
   });
 
   renderSaboresAdmin();
+}
 }
