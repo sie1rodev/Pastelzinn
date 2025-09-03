@@ -59,6 +59,8 @@ async function enviarPedido() {
   const nomeCliente = document.getElementById("nomeCliente").value.trim();
   if (!nomeCliente) { alert("Digite seu nome!"); return; }
 
+  const paraViagem = document.getElementById("paraViagem").checked;
+
   const resSabores = await fetch(`${API_URL}/sabores`);
   const sabores = await resSabores.json();
 
@@ -74,18 +76,20 @@ async function enviarPedido() {
   const res = await fetch(`${API_URL}/pedidos`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nomeCliente, pedido })
+    body: JSON.stringify({ nomeCliente, pedido, paraViagem })
   });
 
   const data = await res.json();
   if (res.ok) { 
-    alert(`Pedido realizado! Total: R$ ${total.toFixed(2)}`);
+    alert(`Pedido realizado! Total: R$ ${total.toFixed(2)}${paraViagem ? " (para viagem)" : ""}`);
     carregarSaboresCliente(); 
     document.getElementById("nomeCliente").value = "";
+    document.getElementById("paraViagem").checked = false;
   } else {
     alert(data.error || "Erro ao enviar pedido.");
   }
 }
+
 
 // ---------- ADMIN - COMANDAS ----------
 async function carregarPedidos() {
@@ -99,7 +103,21 @@ async function carregarPedidos() {
   pedidos.forEach(p => {
     const li = document.createElement("li");
 
+    // Nome do cliente
     li.innerHTML = `<strong>${p.nomeCliente}</strong>`;
+
+    // Exibe "para viagem"
+    if (p.paraViagem) {
+      const viagemTag = document.createElement("span");
+      viagemTag.textContent = "🚗 Para viagem";
+      viagemTag.style.color = "#FF9F45";
+      viagemTag.style.fontSize = "0.9rem";
+      viagemTag.style.fontWeight = "bold";
+      viagemTag.style.textTransform = "uppercase";
+      viagemTag.style.display = "block";
+      viagemTag.style.marginBottom = "8px";
+      li.appendChild(viagemTag);
+    }
 
     const ul = document.createElement("ul");
     p.pedido.forEach(item => {
@@ -123,7 +141,6 @@ async function carregarPedidos() {
     totalP.innerHTML = `<strong>Total: R$ ${total.toFixed(2)}</strong>`;
     li.appendChild(totalP);
 
-    // Botão concluir
     const btnConcluir = document.createElement("button");
     btnConcluir.textContent = "Concluir comanda";
     btnConcluir.className = "btn-danger btn-concluir";
@@ -133,7 +150,6 @@ async function carregarPedidos() {
       carregarPedidos();
     });
 
-    // Botão editar
     const btnEditar = document.createElement("button");
     btnEditar.textContent = "Editar comanda";
     btnEditar.className = "btn-primary btn-editar";
@@ -163,7 +179,6 @@ function entrarModoEdicao(li, pedido, sabores) {
   const form = document.createElement("div");
   form.classList.add("form-edicao");
 
-  // Sabores já no pedido
   pedido.pedido.forEach(item => {
     const sabor = sabores.find(s => s._id === item.saborId);
     if (!sabor) return;
@@ -186,11 +201,10 @@ function entrarModoEdicao(li, pedido, sabores) {
     form.appendChild(linha);
   });
 
-  // Adicionar novos sabores disponíveis
   const novosSabores = document.createElement("div");
   novosSabores.classList.add("novos-sabores");
   sabores.forEach(sabor => {
-    if (pedido.pedido.some(i => i.saborId === sabor._id)) return; // já está no pedido
+    if (pedido.pedido.some(i => i.saborId === sabor._id)) return;
 
     const linha = document.createElement("div");
     linha.classList.add("linha-edicao");

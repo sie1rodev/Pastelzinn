@@ -295,3 +295,53 @@ button.btn-danger-full {
   text-transform: uppercase;
 }
 
+
+/* --- Estilo para a seção de "Para viagem" --- */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  font-size: 1rem;
+  color: #5A3E36;
+  font-weight: 600;
+}
+
+/* Estilo padrão para checkboxes */
+input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #E0C9A6;
+  border-radius: 6px;
+  background-color: #FFF8F0;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Estilo quando marcado */
+input[type="checkbox"]:checked {
+  background-color: #FFB347;
+  border-color: #FF9F45;
+}
+
+/* Checkmark personalizado */
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  opacity: 0;
+  transform: rotate(45deg);
+  transition: opacity 0.2s ease-in-out;
+}
+
+input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
