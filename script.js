@@ -99,18 +99,8 @@ async function carregarPedidos() {
   pedidos.forEach(p => {
     const li = document.createElement("li");
 
-    // Botão concluir
-    const btnConcluir = document.createElement("button");
-    btnConcluir.textContent = "Concluir comanda";
-    btnConcluir.className = "btn-danger btn-concluir";
-    btnConcluir.addEventListener("click", async () => {
-      if (!confirm("Deseja concluir esta comanda?")) return;
-      await fetch(`${API_URL}/pedidos/${p._id}`, { method: "DELETE" });
-      carregarPedidos();
-    });
-
     li.innerHTML = `<strong>${p.nomeCliente}</strong>`;
-    
+
     const ul = document.createElement("ul");
     p.pedido.forEach(item => {
       const sabor = sabores.find(s => s._id === item.saborId);
@@ -133,7 +123,24 @@ async function carregarPedidos() {
     totalP.innerHTML = `<strong>Total: R$ ${total.toFixed(2)}</strong>`;
     li.appendChild(totalP);
 
+    // Botão concluir
+    const btnConcluir = document.createElement("button");
+    btnConcluir.textContent = "Concluir comanda";
+    btnConcluir.className = "btn-danger btn-concluir";
+    btnConcluir.addEventListener("click", async () => {
+      if (!confirm("Deseja concluir esta comanda?")) return;
+      await fetch(`${API_URL}/pedidos/${p._id}`, { method: "DELETE" });
+      carregarPedidos();
+    });
+
+    // Botão editar
+    const btnEditar = document.createElement("button");
+    btnEditar.textContent = "Editar comanda";
+    btnEditar.className = "btn-primary btn-editar";
+    btnEditar.addEventListener("click", () => entrarModoEdicao(li, p, sabores));
+
     li.appendChild(btnConcluir);
+    li.appendChild(btnEditar);
 
     lista.appendChild(li);
   });
@@ -143,6 +150,112 @@ async function zerarComandas() {
   if (!confirm("Tem certeza que deseja zerar todas as comandas?")) return;
   await fetch(`${API_URL}/pedidos`, { method: "DELETE" });
   carregarPedidos();
+}
+
+// ---------- EDITAR PEDIDO ----------
+function entrarModoEdicao(li, pedido, sabores) {
+  li.innerHTML = ""; 
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = `Editando: ${pedido.nomeCliente}`;
+  li.appendChild(titulo);
+
+  const form = document.createElement("div");
+  form.classList.add("form-edicao");
+
+  // Sabores já no pedido
+  pedido.pedido.forEach(item => {
+    const sabor = sabores.find(s => s._id === item.saborId);
+    if (!sabor) return;
+
+    const linha = document.createElement("div");
+    linha.classList.add("linha-edicao");
+
+    const label = document.createElement("span");
+    label.textContent = `${sabor.nome} (estoque: ${sabor.quantidade})`;
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = 0;
+    input.value = item.quantidade;
+    input.dataset.saborId = sabor._id;
+    input.dataset.preco = sabor.preco ?? 12;
+
+    linha.appendChild(label);
+    linha.appendChild(input);
+    form.appendChild(linha);
+  });
+
+  // Adicionar novos sabores disponíveis
+  const novosSabores = document.createElement("div");
+  novosSabores.classList.add("novos-sabores");
+  sabores.forEach(sabor => {
+    if (pedido.pedido.some(i => i.saborId === sabor._id)) return; // já está no pedido
+
+    const linha = document.createElement("div");
+    linha.classList.add("linha-edicao");
+
+    const label = document.createElement("span");
+    label.textContent = `${sabor.nome} (estoque: ${sabor.quantidade})`;
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = 0;
+    input.value = 0;
+    input.dataset.saborId = sabor._id;
+    input.dataset.preco = sabor.preco ?? 12;
+
+    linha.appendChild(label);
+    linha.appendChild(input);
+    novosSabores.appendChild(linha);
+  });
+
+  form.appendChild(novosSabores);
+  li.appendChild(form);
+
+  const actions = document.createElement("div");
+  actions.classList.add("acoes-edicao");
+
+  const btnSalvar = document.createElement("button");
+  btnSalvar.textContent = "Salvar alterações";
+  btnSalvar.className = "btn-success";
+  btnSalvar.addEventListener("click", async () => {
+    const novoPedido = [];
+    form.querySelectorAll("input").forEach(input => {
+      const qtd = parseInt(input.value);
+      if (!isNaN(qtd) && qtd > 0) {
+        novoPedido.push({
+          saborId: input.dataset.saborId,
+          quantidade: qtd,
+          preco: parseFloat(input.dataset.preco)
+        });
+      }
+    });
+
+    const res = await fetch(`${API_URL}/pedidos/${pedido._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nomeCliente: pedido.nomeCliente, pedido: novoPedido })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert("Comanda atualizada!");
+      carregarPedidos();
+    } else {
+      alert(data.error || "Erro ao atualizar comanda.");
+    }
+  });
+
+  const btnCancelar = document.createElement("button");
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.className = "btn-secondary";
+  btnCancelar.addEventListener("click", carregarPedidos);
+
+  actions.appendChild(btnSalvar);
+  actions.appendChild(btnCancelar);
+
+  li.appendChild(actions);
 }
 
 // ---------- ADMIN - SABORES ----------
@@ -180,7 +293,6 @@ async function adicionarSabor(e) {
     return;
   }
 
-
   const preco = 12.00;
 
   const res = await fetch(`${API_URL}/sabores`, {
@@ -195,7 +307,6 @@ async function adicionarSabor(e) {
   document.getElementById("formSabor").reset();
   carregarSaboresAdmin();
 }
-
 
 async function removerSabor(id) {
   if (!confirm("Deseja remover este sabor?")) return;
