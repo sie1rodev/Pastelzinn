@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comandas</title>
+
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/pedidos.css">
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="logo">🥟 PastelZinn</div>
+
+    <div class="nav-links">
+      <a href="index.html">Pedido</a>
+      <a href="pedidos.html">Comandas</a>
+      <a href="sabores.html">Sabores</a>
+      <a href="dashboard.html">Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <h2>📦 Comandas abertas</h2>
+
+    <button class="btn-danger" onclick="encerrarTodas()">
+      Encerrar Todas
+    </button>
+
+    <div id="listaPedidos"></div>
+
+  </main>
+
+  <script src="js/global.js"></script>
+  <script src="js/pedidos.js"></script>
+
+</body>
+</html>

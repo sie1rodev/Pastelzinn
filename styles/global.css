@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Inter",sans-serif;
+}
+
+body{
+  background:#fff8f1;
+  color:#2d2d2d;
+  min-height:100vh;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar{
+  width:100%;
+  background:white;
+  padding:16px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:999;
+  box-shadow:0 2px 20px rgba(0,0,0,.06);
+}
+
+.logo{
+  font-size:1.5rem;
+  font-weight:800;
+  color:#ff6b00;
+}
+
+.nav-links{
+  display:flex;
+  gap:25px;
+}
+
+.nav-links a{
+  text-decoration:none;
+  color:#444;
+  font-weight:700;
+  transition:.2s;
+  position:relative;
+}
+
+.nav-links a:hover{
+  color:#ff6b00;
+}
+
+.nav-links a::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-6px;
+  width:0%;
+  height:3px;
+  background:#ff6b00;
+  transition:.2s;
+  border-radius:10px;
+}
+
+.nav-links a:hover::after{
+  width:100%;
+}
+
+/* ================= HEADER ================= */
+
+.topo{
+  width:100%;
+  background:linear-gradient(135deg,#ff7a00,#ff5100);
+  padding:45px 20px;
+  text-align:center;
+  color:white;
+  border-radius:0 0 30px 30px;
+  margin-bottom:25px;
+  box-shadow:0 10px 30px rgba(255,102,0,.25);
+}
+
+.topo h1{
+  font-size:2.5rem;
+  font-weight:800;
+}
+
+.topo p{
+  margin-top:8px;
+  opacity:.9;
+}
+
+/* ================= CONTAINER ================= */
+
+.container{
+  width:100%;
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+/* ================= TITULOS ================= */
+
+.titulo{
+  font-size:1.6rem;
+  margin-bottom:18px;
+  color:#ff6b00;
+  font-weight:900;
+}
+
+/* ================= INPUTS ================= */
+
+input, select{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  outline:none;
+  background:white;
+  box-shadow:0 5px 15px rgba(0,0,0,.05);
+  margin-top:10px;
+}
+
+/* ================= BOTÕES ================= */
+
+button{
+  border:none;
+  cursor:pointer;
+}
+
+/* ================= RESPONSIVO ================= */
+
+@media(max-width:768px){
+  .nav-links{
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+}

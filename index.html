@@ -3,31 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pedido de Pastéis</title>
-  <link rel="stylesheet" href="style.css">
+  <title>PastelZinn</title>
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/index.css">
 </head>
+
 <body>
-  <nav>
-    <a href="index.html">Fazer Pedido</a>
-    <a href="admin.html">Comandas</a>
-    <a href="sabores.html">Sabores</a>
-  </nav>
 
-  <div class="card">
-    <h2>Monte seu Pedido</h2>
-    <label for="nomeCliente">Seu nome:</label>
-    <input type="text" id="nomeCliente" placeholder="Digite seu nome">
+  <nav class="navbar">
 
-    <div class="checkbox-container">
-      <label for="paraViagem">Para viagem:</label>
-      <input type="checkbox" id="paraViagem">
+    <div class="logo">
+      🥟 PastelZinn
     </div>
 
+    <div class="nav-links">
 
-    <div class="sabores-lista" id="saboresLista"></div>
-    <button id="confirmarPedido">Confirmar Pedido</button>
-  </div>
+      <a href="index.html">
+        Pedido
+      </a>
 
-  <script src="script.js"></script>
+      <a href="pedidos.html">
+        Comandas
+      </a>
+
+      <a href="sabores.html">
+        Sabores
+      </a>
+
+      <a href="dashboard.html">
+        Dashboard
+      </a>
+
+    </div>
+
+  </nav>
+
+  <header class="topo">
+    <h1>🥟 PastelZinn</h1>
+    <p>Monte seu pedido</p>
+  </header>
+
+  <main class="container">
+
+    <!-- CLIENTE -->
+    <section class="cliente-box">
+      <input
+        type="text"
+        id="cliente"
+        placeholder="Digite seu nome"
+      >
+    </section>
+
+    <!-- SABORES -->
+    <section>
+      <h2 class="titulo">Escolha seus pastéis</h2>
+
+      <div id="listaSaboresPedido" class="grid-sabores">
+      </div>
+    </section>
+
+    <!-- CARRINHO -->
+    <section class="carrinho">
+
+      <h2>🛒 Seu pedido</h2>
+
+      <div id="itensCarrinho"></div>
+
+      <h3 id="totalPedido">
+        Total: R$ 0,00
+      </h3>
+
+      <button
+        class="btn-finalizar"
+        onclick="finalizarPedido()"
+      >
+        Finalizar Pedido
+      </button>
+
+    </section>
+
+  </main>
+
+    <script src="js/global.js"></script>
+  <script src="js/index.js"></script>
+
 </body>
 </html>

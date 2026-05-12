@@ -1,0 +1,136 @@
+/* ================= CLIENTE ================= */
+
+.cliente-box input{
+  width:100%;
+  padding:18px;
+  border-radius:18px;
+  border:none;
+  outline:none;
+  background:white;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+/* ================= GRID SABORES ================= */
+
+.grid-sabores{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+
+/* ================= CARD SABOR ================= */
+
+.card-sabor{
+  background:white;
+  border-radius:24px;
+  padding:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+  transition:.25s;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  position:relative;
+}
+
+.card-sabor::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:6px;
+  background:linear-gradient(90deg,#ff7a00,#ff5100);
+}
+
+.card-sabor:hover{
+  transform:translateY(-5px);
+}
+
+.preco{
+  color:#ff6b00;
+  font-size:1.3rem;
+  font-weight:800;
+}
+
+.estoque{
+  color:#777;
+}
+
+/* ================= CONTROLES ================= */
+
+.controls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+}
+
+.controls button{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  font-size:1.3rem;
+  font-weight:800;
+  color:white;
+}
+
+.controls button:first-child{
+  background:#ff4d4d;
+}
+
+.controls button:last-child{
+  background:#00b894;
+}
+
+.controls span{
+  font-weight:800;
+}
+
+/* ================= CARRINHO ================= */
+
+.carrinho{
+  margin-top:35px;
+  background:white;
+  padding:25px;
+  border-radius:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
+
+.item-carrinho{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 0;
+  border-bottom:1px solid #eee;
+}
+
+#totalPedido{
+  margin-top:20px;
+  text-align:right;
+  font-size:1.5rem;
+  font-weight:900;
+  color:#ff6b00;
+}
+
+/* ================= BOTÃO FINALIZAR ================= */
+
+.btn-finalizar{
+  width:100%;
+  margin-top:25px;
+  padding:18px;
+  border:none;
+  border-radius:18px;
+  background:linear-gradient(135deg,#00c853,#00a844);
+  color:white;
+  font-size:1.1rem;
+  font-weight:800;
+}
+
+/* ================= RESPONSIVO ================= */
+
+@media(max-width:768px){
+  .grid-sabores{
+    grid-template-columns:1fr;
+  }
+}

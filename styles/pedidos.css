@@ -1,0 +1,35 @@
+.add-item {
+  display: none;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 12px;
+}
+
+.add-item select,
+.add-item input {
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.add-item-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.btn-toggle {
+  background: #222831;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  width: fit-content;
+}
+
+.btn-toggle:hover {
+  background: #393E46;
+}

@@ -1,28 +1,31 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerenciar Sabores</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/sabores.css">
+  <title>Document</title>
 </head>
 <body>
   <nav>
-    <a href="index.html">Fazer Pedido</a>
-    <a href="admin.html">Comandas</a>
-    <a href="sabores.html">Sabores</a>
-  </nav>
+  <a href="index.html">Pedido</a>
+  <a href="pedidos.html">Comandas</a>
+  <a href="sabores.html">Sabores</a>
+  <a href="dashboard.html">Dashboard</a>
+</nav>
 
-  <div class="card">
-    <h2>Sabores</h2>
-    <form id="formSabor">
-      <input type="text" id="nomeSabor" placeholder="Nome do sabor" required>
-      <input type="number" id="quantidadeSabor" placeholder="Quantidade em estoque" min="0" required>
-      <button type="submit">Adicionar Sabor</button>
-    </form>
-    <ul class="listaSabores" id="listaSabores"></ul>
-  </div>
+<h2>Sabores</h2>
 
-  <script src="script.js"></script>
+<input id="nome">
+<input id="qtd" type="number">
+<input id="preco" type="number">
+
+<button onclick="addSabor()">Adicionar</button>
+
+<div id="listaSabores"></div>
+  <script src="js/global.js"></script>
+  <script src="js/sabores
+<script src="script.js"></script>
 </body>
 </html>
