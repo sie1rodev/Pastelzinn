@@ -185,21 +185,21 @@ async function deletarItem(id) {
 }
 
 /* =========================================
-✅ ENCERRAR PEDIDO
+✅ ENCERRAR PEDIDO (DELETE)
 ========================================= */
 async function encerrarPedido(id) {
 
   await fetch(`${API}/pedidos`, {
-    method: "PUT",
+    method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, status: "encerrado" })
+    body: JSON.stringify({ id })
   });
 
   loadPedidos();
 }
 
 /* =========================================
-🔥 ENCERRAR TODOS
+🔥 ENCERRAR TODOS (DELETE)
 ========================================= */
 async function encerrarTodas() {
 
@@ -210,7 +210,11 @@ async function encerrarTodas() {
 
   for (const p of pedidos) {
     if (p.status !== "encerrado") {
-      await encerrarPedido(p.id);
+      await fetch(`${API}/pedidos`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: p.id })
+      });
     }
   }
 

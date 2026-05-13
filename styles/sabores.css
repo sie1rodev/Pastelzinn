@@ -1,1 +1,95 @@
-/* Estilos específicos para a página de sabores */
+.container{
+  padding:20px 0;
+}
+
+/* ================= FORM ================= */
+
+.form-box{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.form-box input{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  outline:none;
+}
+
+.btn-add{
+  width:100%;
+  background:#00c853;
+  color:white;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.btn-add:hover{
+  background:#00a844;
+}
+
+/* ================= CARDS ================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:15px;
+}
+
+.card{
+  background:white;
+  padding:16px;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.card h3{
+  margin:0;
+  color:#ff6b00;
+}
+
+/* ================= DELETE ================= */
+
+.btn-delete{
+  background:#ff4d4d;
+  color:white;
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.btn-delete:hover{
+  background:#e60000;
+}
+
+@media(min-width:768px){
+  .form-box{
+    flex-direction:row;
+    align-items:flex-end;
+  }
+
+  .form-box input{
+    flex:1;
+  }
+
+  .btn-add{
+    width:auto;
+  }
+
+  .grid{
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  }
+}

@@ -1,31 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="styles/global.css">
   <link rel="stylesheet" href="styles/sabores.css">
-  <title>Document</title>
+
+  <title>Sabores</title>
 </head>
+
 <body>
-  <nav>
-  <a href="index.html">Pedido</a>
-  <a href="pedidos.html">Comandas</a>
-  <a href="sabores.html">Sabores</a>
-  <a href="dashboard.html">Dashboard</a>
+
+<nav class="navbar">
+
+  <div class="logo">🥟 PastelZinn</div>
+
+  <div class="nav-links">
+    <a href="index.html">Pedido</a>
+    <a href="pedidos.html">Comandas</a>
+    <a href="sabores.html">Sabores</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
+
 </nav>
 
-<h2>Sabores</h2>
+  <main class="container">
 
-<input id="nome">
-<input id="qtd" type="number">
-<input id="preco" type="number">
+    <h2>🌮 Estoque de Sabores</h2>
 
-<button onclick="addSabor()">Adicionar</button>
+    <!-- FORM -->
+    <div class="form-box">
 
-<div id="listaSabores"></div>
+      <input id="nome" placeholder="Nome do sabor">
+      <input id="qtd" type="number" placeholder="Quantidade">
+      <input id="preco" type="number" placeholder="Preço">
+
+      <button class="btn-add" onclick="addSabor()">
+        Adicionar sabor
+      </button>
+
+    </div>
+
+    <!-- LISTA -->
+    <div id="listaSabores" class="grid"></div>
+
+  </main>
+
   <script src="js/global.js"></script>
-  <script src="js/sabores
-<script src="script.js"></script>
+  <script src="js/sabores.js"></script>
+
 </body>
 </html>
